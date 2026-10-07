@@ -1,0 +1,165 @@
+name: Build Native Android APK & Release
+
+on:
+  push:
+    branches: [ "main" ]
+    tags:
+      - 'v*'
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+
+    - name: Install Node Dependencies
+      run: npm install --legacy-peer-deps
+
+    - name: Build Web Application
+      run: npm run build --if-present
+
+    - name: Sync Capacitor Android Project
+      run: npx cap sync android || true
+
+    - name: Generate Custom Icons
+      run: |
+        npm run icons:generate || true
+
+    - name: Set up Java JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+
+    - name: Configure Android Build Properties & SDK
+      run: |
+        PROPS_FILE=""
+        if [ -f "android/gradle.properties" ]; then
+          PROPS_FILE="android/gradle.properties"
+        elif [ -f "gradle.properties" ]; then
+          PROPS_FILE="gradle.properties"
+        fi
+
+        if [ -n "$PROPS_FILE" ]; then
+          echo "android.useAndroidX=true" >> "$PROPS_FILE"
+          echo "android.enableJetifier=false" >> "$PROPS_FILE"
+          echo "compileSdkVersion=36" >> "$PROPS_FILE"
+          echo "targetSdkVersion=36" >> "$PROPS_FILE"
+          echo "minSdkVersion=24" >> "$PROPS_FILE"
+        fi
+
+        # Accept Android SDK licenses and ensure SDK platform 36 is ready
+        yes | sdkmanager --licenses || true
+        sdkmanager "platforms;android-36" "build-tools;36.0.0" "platforms;android-35" || true
+
+    - name: Ensure Persistent Keystore Exists
+      run: |
+        if [ ! -f "android/app/debug.keystore" ]; then
+          echo "debug.keystore not found, restoring persistent static keystore from seed..."
+          echo "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" | base64 -d > android/app/debug.keystore
+        fi
+        echo "Persistent debug.keystore verified (Consistent digital signature enabled for in-place APK updates)."
+
+    - name: Grant Execute Permission for Gradle Wrapper
+      run: |
+        GRADLEW_PATH=$(find . -name gradlew -print -quit)
+        if [ -n "$GRADLEW_PATH" ]; then
+          chmod +x "$GRADLEW_PATH"
+        fi
+
+    - name: Build Debug APK
+      run: |
+        GRADLEW_PATH=$(find . -name gradlew -print -quit)
+        GRADLEW_DIR=$(dirname "$GRADLEW_PATH")
+        cd "$GRADLEW_DIR"
+        chmod +x ./gradlew
+        ./gradlew assembleDebug --stacktrace --no-daemon
+
+    - name: Prepare Release APK with Latest Version
+      run: |
+        if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+          TAG="${{ github.ref_name }}"
+          VERSION="${TAG#v}"
+        else
+          VERSION="1.0.${{ github.run_number }}"
+          TAG="v${VERSION}"
+        fi
+        
+        APK_PATH=$(find android/app/build/outputs/apk -name "*.apk" -print -quit 2>/dev/null)
+        if [ -z "$APK_PATH" ]; then
+          APK_PATH=$(find . -name "*.apk" -print -quit 2>/dev/null)
+        fi
+        
+        echo "Found APK at: $APK_PATH"
+        if [ -n "$APK_PATH" ] && [ -f "$APK_PATH" ]; then
+          TARGET_APK="SmartParking-v${VERSION}.apk"
+          LATEST_APK="SmartParking-latest.apk"
+          
+          cp "$APK_PATH" "$TARGET_APK"
+          cp "$APK_PATH" "$LATEST_APK"
+          
+          echo "RELEASE_TAG=${TAG}" >> $GITHUB_ENV
+          echo "RELEASE_VERSION=${VERSION}" >> $GITHUB_ENV
+          echo "RELEASE_APK=${TARGET_APK}" >> $GITHUB_ENV
+          echo "LATEST_APK=${LATEST_APK}" >> $GITHUB_ENV
+        else
+          echo "Error: No APK found after assembleDebug"
+          exit 1
+        fi
+
+    - name: Upload APK Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: parking-lot-apk
+        path: |
+          SmartParking-v*.apk
+          SmartParking-latest.apk
+          **/build/outputs/apk/debug/*.apk
+
+    - name: Publish Direct GitHub Release
+      if: github.event_name != 'pull_request'
+      continue-on-error: true
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ env.RELEASE_TAG }}
+        name: Smart Parking ${{ env.RELEASE_TAG }}
+        draft: false
+        prerelease: false
+        make_latest: true
+        body: |
+          ## 🚗 Smart Parking System — Release ${{ env.RELEASE_TAG }}
+          
+          ### 📱 Direct APK Download
+          Download the Android APK directly to your phone:
+          - **[${{ env.RELEASE_APK }}](https://github.com/${{ github.repository }}/releases/download/${{ env.RELEASE_TAG }}/${{ env.RELEASE_APK }})** (Version-specific APK)
+          - **[SmartParking-latest.apk](https://github.com/${{ github.repository }}/releases/download/${{ env.RELEASE_TAG }}/${{ env.LATEST_APK }})** (Latest APK)
+          
+          ---
+          
+          #### 📋 Build Details:
+          - **Version:** `${{ env.RELEASE_VERSION }}`
+          - **Version Code:** `1000 + ${{ github.run_number }}`
+          - **Commit:** `${{ github.sha }}`
+          - **Seamless Updates:** Uses consistent signature key — install directly or update existing app in 1 tap without uninstalling!
+        files: |
+          ${{ env.RELEASE_APK }}
+          ${{ env.LATEST_APK }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

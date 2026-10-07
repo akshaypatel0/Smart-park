@@ -1,0 +1,8 @@
+{
+  "name": "Remix Smart Parking 3D Dashboard",
+  "description": "Real-time 3-Slot Smart Parking Dashboard with 3D isometric visualization, Arduino Web Serial communication, sensor telemetry, and buzzer indicators.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

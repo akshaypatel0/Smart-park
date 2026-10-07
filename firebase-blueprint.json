@@ -1,0 +1,76 @@
+{
+  "entities": {
+    "ParkingLot": {
+      "title": "ParkingLot",
+      "description": "Real-time state and telemetry for the 3-bay smart parking lot",
+      "type": "object",
+      "properties": {
+        "systemId": {
+          "type": "string",
+          "description": "Unique identifier for this parking installation (e.g. lakha-par-main)",
+          "maxLength": 64
+        },
+        "name": {
+          "type": "string",
+          "description": "School or facility name",
+          "maxLength": 128
+        },
+        "gate": {
+          "type": "string",
+          "description": "Parking barrier gate state",
+          "enum": ["OPEN", "CLOSED"]
+        },
+        "gateAngle": {
+          "type": "number",
+          "description": "Servo arm angle in degrees"
+        },
+        "buzzerOn": {
+          "type": "boolean",
+          "description": "Whether alert buzzer is active"
+        },
+        "totalOccupied": {
+          "type": "number",
+          "description": "Count of occupied parking bays"
+        },
+        "totalSlots": {
+          "type": "number",
+          "description": "Total parking bays in project (3)"
+        },
+        "isHardwareConnected": {
+          "type": "boolean",
+          "description": "Whether gateway mobile is currently receiving Arduino Bluetooth/USB signals"
+        },
+        "isOnline": {
+          "type": "boolean",
+          "description": "Whether gateway has an active internet sync heartbeat"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of telemetry",
+          "enum": ["gateway_bt", "gateway_usb", "simulator", "cloud", "disconnected"]
+        },
+        "statusMessage": {
+          "type": "string",
+          "description": "Human-readable hardware or connection status note",
+          "maxLength": 256
+        },
+        "slotsData": {
+          "type": "string",
+          "description": "JSON representation of slot states, distances, and occupancy",
+          "maxLength": 4096
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "ISO timestamp of the latest broadcast"
+        }
+      },
+      "required": ["systemId", "gate", "buzzerOn", "totalOccupied", "totalSlots", "isHardwareConnected", "source", "slotsData", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/parking/{systemId}": {
+      "schema": "ParkingLot",
+      "description": "Live status document for public live link viewers and gateway updates"
+    }
+  }
+}

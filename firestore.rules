@@ -1,0 +1,44 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global Safety Net: default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 64 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isValidParkingLot(data) {
+      return data.keys().hasAll(['systemId', 'gate', 'buzzerOn', 'totalOccupied', 'totalSlots', 'isHardwareConnected', 'source', 'slotsData', 'updatedAt'])
+        && data.keys().hasOnly(['systemId', 'name', 'gate', 'gateAngle', 'buzzerOn', 'totalOccupied', 'totalSlots', 'isHardwareConnected', 'isOnline', 'source', 'statusMessage', 'slotsData', 'updatedAt'])
+        && data.systemId is string && data.systemId.size() <= 64
+        && (!('name' in data) || (data.name is string && data.name.size() <= 128))
+        && data.gate in ['OPEN', 'CLOSED']
+        && (!('gateAngle' in data) || (data.gateAngle is number && data.gateAngle >= 0 && data.gateAngle <= 180))
+        && data.buzzerOn is bool
+        && data.totalOccupied is number && data.totalOccupied >= 0 && data.totalOccupied <= 10
+        && data.totalSlots is number && data.totalSlots >= 1 && data.totalSlots <= 10
+        && data.isHardwareConnected is bool
+        && (!('isOnline' in data) || data.isOnline is bool)
+        && data.source in ['gateway_bt', 'gateway_usb', 'simulator', 'cloud', 'disconnected']
+        && (!('statusMessage' in data) || (data.statusMessage is string && data.statusMessage.size() <= 256))
+        && data.slotsData is string && data.slotsData.size() <= 4096
+        && data.updatedAt is string && data.updatedAt.size() <= 64;
+    }
+
+    match /parking/{systemId} {
+      // Anyone can view live parking telemetry (essential for GitHub Pages live link / public driver display)
+      allow get: if isValidId(systemId);
+      allow list: if false;
+
+      // Gateway mobile APK writes parking telemetry with strict validation
+      allow create, update: if isValidId(systemId)
+        && request.resource.data.systemId == systemId
+        && isValidParkingLot(request.resource.data);
+
+      allow delete: if false;
+    }
+  }
+}

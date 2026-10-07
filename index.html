@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en" class="dark" style="background-color: #080c14; color-scheme: dark;">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>Smart Parking - શ્રી સરકારી માધ્યમિક શાળા લાખાપર</title>
+    <meta name="description" content="Automated 3-Bay Smart Parking System for શ્રી સરકારી માધ્યમિક શાળા લાખાપર with 100% offline support, Arduino Uno telemetry, and native APK capability." />
+    <meta property="og:title" content="Smart Parking - શ્રી સરકારી માધ્યમિક શાળા લાખાપર" />
+    <meta property="og:description" content="Automated 3-Bay Smart Parking System with 100% offline support and native APK capability." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="theme-color" content="#080c14" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="SmartPark" />
+    <link rel="icon" type="image/png" href="/icon.png" />
+    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+    <link rel="alternate icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anek+Gujarati:wght@400;500;600;700;800&family=Noto+Sans+Gujarati:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+      html, body {
+        background-color: #080c14 !important;
+        color: #f1f5f9;
+        margin: 0;
+        padding: 0;
+      }
+      @keyframes spinLoader {
+        to { transform: rotate(360deg); }
+      }
+    </style>
+  </head>
+  <body style="background-color: #080c14; color: #f1f5f9; margin: 0; min-height: 100vh;" class="bg-[#080c14] text-slate-100 antialiased font-sans selection:bg-emerald-500/30 selection:text-emerald-200">
+    <div id="root">
+      <!-- Dark instant fallback shell: prevents any white screen flash while bundle loads -->
+      <div style="min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: #080c14; color: #94a3b8; font-family: system-ui, -apple-system, sans-serif; text-align: center; padding: 20px;">
+        <div style="width: 44px; height: 44px; border: 3px solid #1e293b; border-top-color: #06b6d4; border-radius: 50%; animation: spinLoader 0.9s linear infinite; margin-bottom: 18px;"></div>
+        <div style="font-size: 18px; font-weight: 800; color: #f8fafc; letter-spacing: -0.02em; margin-bottom: 6px;">Smart Parking System</div>
+        <div style="font-size: 13px; font-weight: 600; color: #f59e0b; margin-bottom: 8px;">શ્રી સરકારી માધ્યમિક શાળા લાખાપર</div>
+        <div style="font-size: 11px; font-family: monospace; color: #64748b;">Loading hardware dashboard...</div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+

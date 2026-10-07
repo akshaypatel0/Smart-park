@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Smart Parking</string>
+    <string name="title_activity_main">Smart Parking</string>
+    <string name="package_name">com.lakhapar.smartparking</string>
+    <string name="custom_url_scheme">com.lakhapar.smartparking</string>
+</resources>
