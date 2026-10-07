@@ -35,6 +35,14 @@ jobs:
     - name: Build Web Application
       run: npm run build --if-present
 
+    - name: Deploy Live Link to GitHub Pages (gh-pages branch)
+      if: github.ref == 'refs/heads/main'
+      continue-on-error: true
+      uses: peaceiris/actions-gh-pages@v4
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./dist
+
     - name: Sync Capacitor Android Project
       run: npx cap sync android || true
 
