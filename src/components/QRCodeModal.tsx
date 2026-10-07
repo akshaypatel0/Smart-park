@@ -43,9 +43,9 @@ export const QRCodeModal: React.FC<QRCodeModalProps> = ({
   const [publicUrl, setPublicUrl] = useState('');
   const [githubPagesBase, setGithubPagesBase] = useState(() => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('smartparking_gh_pages_url') || 'https://nrahir007.github.io/smart-parking/';
+      return localStorage.getItem('smartparking_gh_pages_url') || 'https://akshaypatel0.github.io/Smart-park/';
     }
-    return 'https://nrahir007.github.io/smart-parking/';
+    return 'https://akshaypatel0.github.io/Smart-park/';
   });
   const [selectedLinkType, setSelectedLinkType] = useState<'current' | 'github'>('current');
   const [packetsSent, setPacketsSent] = useState(cloudSync.getPacketsSent());

@@ -193,21 +193,6 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
               </button>
             )}
 
-            {/* Admin Switcher */}
-            {onSwitchToAdmin && (
-              <button
-                onClick={onSwitchToAdmin}
-                className={`px-2.5 py-1.5 rounded-xl border text-xs font-mono font-bold flex items-center gap-1.5 transition-all shadow-xs cursor-pointer ${
-                  isLight
-                    ? 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-300'
-                    : 'glass-panel text-slate-300 hover:text-white border-slate-700'
-                }`}
-                title="કંટ્રોલર / એડમિન પેનલ પર જાઓ (Switch to Admin Mode)"
-              >
-                <Sliders className="w-3.5 h-3.5 text-cyan-400" />
-                <span className="hidden sm:inline">Admin Mode</span>
-              </button>
-            )}
           </>
         ) : (
           <>

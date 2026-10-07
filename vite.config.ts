@@ -116,6 +116,7 @@ function devParkingApiPlugin(): Plugin {
 
 export default defineConfig(() => {
   return {
+    base: './',
     plugins: [
       react(),
       tailwindcss(),
@@ -132,7 +133,7 @@ export default defineConfig(() => {
           'pwa-maskable-512x512.png',
         ],
         manifest: {
-          id: '/',
+          id: './',
           name: 'Smart Parking - શ્રી સરકારી માધ્યમિક શાળા લાખાપર',
           short_name: 'SmartPark',
           description:
@@ -142,8 +143,8 @@ export default defineConfig(() => {
           display: 'standalone',
           display_override: ['window-controls-overlay', 'standalone', 'minimal-ui'],
           orientation: 'any',
-          start_url: '/',
-          scope: '/',
+          start_url: './',
+          scope: './',
           categories: ['education', 'utilities', 'productivity'],
           shortcuts: [
             {

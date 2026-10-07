@@ -134,40 +134,29 @@ export default function App() {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isPWAInstalled, setIsPWAInstalled] = useState(false);
 
-  // Read-only Public Live View detector (from QR code or live URL)
+  // Read-only Public Live View detector (auto-enabled on GitHub Pages, QR code, or ?view=live)
   const [isReadOnlyView, setIsReadOnlyView] = useState<boolean>(() => {
     if (typeof window === 'undefined') return false;
+    const isGitHub = window.location.hostname.includes('github.io');
     const params = new URLSearchParams(window.location.search);
     const view = params.get('view');
     const mode = params.get('mode');
     const ro = params.get('readonly');
-    return view === 'live' || view === 'readonly' || mode === 'live' || ro === 'true' || ro === '1';
+    return isGitHub || view === 'live' || view === 'readonly' || mode === 'live' || ro === 'true' || ro === '1';
   });
 
   // Display mode for public live viewer: 'combined' | 'board' | '3d'
   const [liveViewMode, setLiveViewMode] = useState<'combined' | 'board' | '3d'>('combined');
 
-  const switchToAdminMode = () => {
-    try {
-      const url = new URL(window.location.href);
-      url.searchParams.delete('view');
-      url.searchParams.delete('mode');
-      url.searchParams.delete('readonly');
-      window.history.pushState({}, '', url.toString());
-      setIsReadOnlyView(false);
-    } catch {
-      setIsReadOnlyView(false);
-    }
-  };
-
   // Sync isReadOnlyView state if browser URL navigation happens
   useEffect(() => {
     const handlePopState = () => {
+      const isGitHub = window.location.hostname.includes('github.io');
       const params = new URLSearchParams(window.location.search);
       const view = params.get('view');
       const mode = params.get('mode');
       const ro = params.get('readonly');
-      setIsReadOnlyView(view === 'live' || view === 'readonly' || mode === 'live' || ro === 'true' || ro === '1');
+      setIsReadOnlyView(isGitHub || view === 'live' || view === 'readonly' || mode === 'live' || ro === 'true' || ro === '1');
     };
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
@@ -1021,7 +1010,6 @@ export default function App() {
         isFullscreen={isParkingLotFullscreen}
         onToggleFullscreen={() => setIsParkingLotFullscreen((prev) => !prev)}
         isReadOnlyView={isReadOnlyView}
-        onSwitchToAdmin={isReadOnlyView ? switchToAdminMode : undefined}
       />
 
       {/* In-App Live Notification Toast HUD */}
@@ -1112,19 +1100,6 @@ export default function App() {
                   3D Yard
                 </button>
               </div>
-
-              <button
-                onClick={switchToAdminMode}
-                className={`text-xs font-mono font-bold px-3 py-1.5 rounded-xl border flex items-center gap-1.5 transition-all shadow-xs cursor-pointer ${
-                  isLight
-                    ? 'bg-white hover:bg-slate-100 text-slate-700 border-slate-300'
-                    : 'bg-slate-800/80 hover:bg-slate-700 text-slate-200 border-slate-700'
-                }`}
-                title="કંટ્રોલર / એડમિન મોડ પર સ્વિચ કરો"
-              >
-                <Sliders className="w-3.5 h-3.5 text-cyan-400" />
-                <span>Admin Mode</span>
-              </button>
             </div>
           </div>
         )}
